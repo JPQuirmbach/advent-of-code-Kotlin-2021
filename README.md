@@ -1,3 +1,5 @@
+[![Java CI with Gradle](https://github.com/JPQuirmbach/advent-of-code-Kotlin-2021/actions/workflows/gradle.yml/badge.svg)](https://github.com/JPQuirmbach/advent-of-code-Kotlin-2021/actions/workflows/gradle.yml)
+
 # advent-of-code-Kotlin-2021
 
 Welcome to the Advent of Code[^aoc] Kotlin project created by [jpquirmbach][github] using the [Advent of Code Kotlin Template][template] delivered by JetBrains.
