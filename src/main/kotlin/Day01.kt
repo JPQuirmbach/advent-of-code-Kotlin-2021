@@ -4,27 +4,16 @@ import readInput
 
 fun main() {
     fun part1(input: List<String>): Int {
-        val intList = input.map { it.toInt() }
-        var result = 0
-        for (i in 1 until intList.size) {
-            if (intList[i] > intList[i - 1]) {
-                result++
-            }
-        }
-        return result
+        return input.map { it.toInt() }
+            .zipWithNext()
+            .count { it.first < it.second }
     }
 
     fun part2(input: List<String>): Int {
-        val intList = input.map { it.toInt() }
-        var result = 0
-        for (i in 0 until intList.size - 3) {
-            val sum1 = intList.slice(i..i + 2).sum()
-            val sum2 = intList.slice(i + 1..i + 3).sum()
-            if (sum2 > sum1) {
-                result++
-            }
-        }
-        return result
+        return input.map { it.toInt() }
+            .windowed(3, 1) { it.sum() }
+            .zipWithNext()
+            .count { it.first < it.second }
     }
 
     // test if implementation meets criteria from the description, like:
