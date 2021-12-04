@@ -7,59 +7,13 @@ fun main() {
     fun part1(input: List<String>): Int {
 
         val (instructions, boards) = parseInput(input)
-
-        instructions.forEach { number ->
-            boards.forEach { board ->
-                board.forEach { row ->
-                    row.forEachIndexed { indexRow, value ->
-                        if (value == number) {
-                            row[indexRow] = -1
-                        }
-                    }
-                }
-                val bingo = board.checkBoardWon()
-                if (bingo) {
-                    val sum = board.sumOf {
-                        it.filter { it > 0 }
-                            .sum()
-                    }
-                    return sum * number
-                }
-
-            }
-        }
-        return input.size
+        return boards.playBingo(instructions)
     }
 
     fun part2(input: List<String>): Int {
 
         val (instructions, boards) = parseInput(input)
-        var lastBoardWonScore = 0
-
-        instructions.forEach { number ->
-            val iterator = boards.iterator()
-            while (iterator.hasNext()) {
-                val board = iterator.next()
-                board.forEach { row ->
-                    row.forEachIndexed { indexRow, value ->
-                        if (value == number) {
-                            row[indexRow] = -1
-                        }
-                    }
-                }
-                val bingo = board.checkBoardWon()
-                if (bingo) {
-                    val sum = board.sumOf {
-                        it.filter { it > 0 }
-                            .sum()
-                    }
-                    lastBoardWonScore = sum * number
-                    iterator.remove()
-                }
-
-            }
-        }
-        return lastBoardWonScore
+        return boards.playBingo(instructions, true)
     }
 
     // test if implementation meets criteria from the description, like:
@@ -88,6 +42,42 @@ fun parseInput(input: List<String>): Pair<List<Int>, MutableList<List<MutableLis
             }
         }.toMutableList()
     return Pair(instructions, boards)
+}
+
+fun MutableList<List<MutableList<Int>>>.playBingo(
+    instructions: List<Int>,
+    removeBoardAfterBingo: Boolean = false
+): Int {
+    var lastBoardWonScore = 0
+
+    instructions.forEach { number ->
+        val iterator = this.iterator()
+        while (iterator.hasNext()) {
+            val board = iterator.next()
+            board.forEach { row ->
+                row.forEachIndexed { indexRow, value ->
+                    if (value == number) {
+                        row[indexRow] = -1
+                    }
+                }
+            }
+            val bingo = board.checkBoardWon()
+            if (bingo) {
+                val sum = board.sumOf {
+                    it.filter { it > 0 }
+                        .sum()
+                }
+                lastBoardWonScore = sum * number
+
+                if (removeBoardAfterBingo) {
+                    iterator.remove()
+                } else {
+                    return lastBoardWonScore
+                }
+            }
+        }
+    }
+    return lastBoardWonScore
 }
 
 fun List<List<Int>>.checkBoardWon(): Boolean {
