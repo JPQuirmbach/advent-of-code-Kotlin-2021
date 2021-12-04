@@ -43,18 +43,58 @@ fun main() {
     }
 
     fun part2(input: List<String>): Int {
-        return input.size
+
+        var lastBoardWonScore = 0
+
+        val instructions = input.first().split(",").map { it.toInt() }
+        val boards = input
+            .drop(1)
+            .filter { it.isNotEmpty() }
+            .windowed(5, 5)
+            .map {
+                it.map { row ->
+                    row.split(" ")
+                        .filter { it.isNotEmpty() }
+                        .map { it.toInt() }
+                        .toMutableList()
+                }
+            }.toMutableList()
+
+        instructions.forEach { number ->
+            val iterator = boards.iterator()
+            while(iterator.hasNext()) {
+                val board = iterator.next()
+                board.forEach { row ->
+                    row.forEachIndexed { indexRow, value ->
+                        if (value == number) {
+                            row[indexRow] = -1
+                        }
+                    }
+                }
+                val bingo = board.checkBoardWon()
+                if (bingo) {
+                    val sum = board.sumOf {
+                        it.filter { it > 0 }
+                            .sum()
+                    }
+                    lastBoardWonScore = sum * number
+                    iterator.remove()
+                }
+
+            }
+        }
+        return lastBoardWonScore
 
     }
 
     // test if implementation meets criteria from the description, like:
     val testInput = readInput("Day04_test")
     check(part1(testInput) == 4512)
-//    check(part2(testInput) == 1924)
+    check(part2(testInput) == 1924)
 
     val input = readInput("Day04")
     println(part1(input))
-//    println(part2(input))
+    println(part2(input))
 }
 
 fun List<List<Int>>.checkBoardWon(): Boolean {
