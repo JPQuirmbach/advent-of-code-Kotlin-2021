@@ -5,19 +5,8 @@ import readInput
 fun main() {
 
     fun part1(input: List<String>): Int {
-        val instructions = input.first().split(",").map { it.toInt() }
-        val boards = input
-            .drop(1)
-            .filter { it.isNotEmpty() }
-            .windowed(5, 5)
-            .map {
-                it.map { row ->
-                    row.split(" ")
-                        .filter { it.isNotEmpty() }
-                        .map { it.toInt() }
-                        .toMutableList()
-                }
-            }
+
+        val (instructions, boards) = parseInput(input)
 
         instructions.forEach { number ->
             boards.forEach { board ->
@@ -44,25 +33,12 @@ fun main() {
 
     fun part2(input: List<String>): Int {
 
+        val (instructions, boards) = parseInput(input)
         var lastBoardWonScore = 0
-
-        val instructions = input.first().split(",").map { it.toInt() }
-        val boards = input
-            .drop(1)
-            .filter { it.isNotEmpty() }
-            .windowed(5, 5)
-            .map {
-                it.map { row ->
-                    row.split(" ")
-                        .filter { it.isNotEmpty() }
-                        .map { it.toInt() }
-                        .toMutableList()
-                }
-            }.toMutableList()
 
         instructions.forEach { number ->
             val iterator = boards.iterator()
-            while(iterator.hasNext()) {
+            while (iterator.hasNext()) {
                 val board = iterator.next()
                 board.forEach { row ->
                     row.forEachIndexed { indexRow, value ->
@@ -84,7 +60,6 @@ fun main() {
             }
         }
         return lastBoardWonScore
-
     }
 
     // test if implementation meets criteria from the description, like:
@@ -95,6 +70,24 @@ fun main() {
     val input = readInput("Day04")
     println(part1(input))
     println(part2(input))
+}
+
+fun parseInput(input: List<String>): Pair<List<Int>, MutableList<List<MutableList<Int>>>> {
+    val instructions = input.first().split(",").map { it.toInt() }
+    val boards = input
+        .asSequence()
+        .drop(1)
+        .filter { it.isNotEmpty() }
+        .windowed(5, 5)
+        .map {
+            it.map { row ->
+                row.split(" ")
+                    .filter { it.isNotEmpty() }
+                    .map { it.toInt() }
+                    .toMutableList()
+            }
+        }.toMutableList()
+    return Pair(instructions, boards)
 }
 
 fun List<List<Int>>.checkBoardWon(): Boolean {
