@@ -4,6 +4,24 @@ import readInput
 
 fun main() {
 
+    fun parseInput(input: List<String>): Pair<List<Int>, MutableList<List<MutableList<Int>>>> {
+        val instructions = input.first().split(",").map { it.toInt() }
+        val boards = input
+            .asSequence()
+            .drop(1)
+            .filter { it.isNotEmpty() }
+            .windowed(5, 5)
+            .map {
+                it.map { row ->
+                    row.split(" ")
+                        .filter { it.isNotEmpty() }
+                        .map { it.toInt() }
+                        .toMutableList()
+                }
+            }.toMutableList()
+        return Pair(instructions, boards)
+    }
+
     fun part1(input: List<String>): Int {
 
         val (instructions, boards) = parseInput(input)
@@ -24,24 +42,6 @@ fun main() {
     val input = readInput("Day04")
     println(part1(input))
     println(part2(input))
-}
-
-fun parseInput(input: List<String>): Pair<List<Int>, MutableList<List<MutableList<Int>>>> {
-    val instructions = input.first().split(",").map { it.toInt() }
-    val boards = input
-        .asSequence()
-        .drop(1)
-        .filter { it.isNotEmpty() }
-        .windowed(5, 5)
-        .map {
-            it.map { row ->
-                row.split(" ")
-                    .filter { it.isNotEmpty() }
-                    .map { it.toInt() }
-                    .toMutableList()
-            }
-        }.toMutableList()
-    return Pair(instructions, boards)
 }
 
 fun MutableList<List<MutableList<Int>>>.playBingo(
