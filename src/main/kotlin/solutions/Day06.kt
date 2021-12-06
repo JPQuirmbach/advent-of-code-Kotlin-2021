@@ -4,40 +4,40 @@ import readInput
 
 fun main() {
 
-    fun part1(input: List<String>): Int {
-        val lanternfishes = input.single()
+    fun growthOfLanternfishes(input: List<String>, days: Int): Long {
+        val lanternfishesDays = input.single()
             .split(",")
-            .map { Lanternfish(it.toInt()) }
-            .toMutableList()
+            .map { it.toInt() }
 
-        repeat(80) {
-            for (lanternfish in lanternfishes) {
-                lanternfish.days--
+        val dayCounter = LongArray(9)
+        lanternfishesDays.forEach { dayCounter[it]++ }
+
+        repeat(days) {
+            val zeros = dayCounter[0]
+            for (i in 1 .. 8) {
+                dayCounter[i - 1] = dayCounter[i]
             }
-
-            lanternfishes.filter { it.days < 0 }
-                .forEach {
-                    it.days = 6;
-                    lanternfishes.add(Lanternfish(8))
-                }
+            dayCounter[6] += zeros
+            dayCounter[8] = zeros
         }
 
-        return lanternfishes.size
+        return dayCounter.sum()
     }
 
-    fun part2(input: List<String>): Int {
-        return input.size
+    fun part1(input: List<String>): Long {
+        return growthOfLanternfishes(input, 80)
+    }
 
+    fun part2(input: List<String>): Long {
+        return growthOfLanternfishes(input, 256)
     }
 
     // test if implementation meets criteria from the description, like:
     val testInput = readInput("Day06_test")
-    check(part1(testInput) == 5934)
-//    check(part2(testInput) == 12)
+    check(part1(testInput) == 5934L)
+    check(part2(testInput) == 26984457539)
 
     val input = readInput("Day06")
     println(part1(input))
-//    println(part2(input))
+    println(part2(input))
 }
-
-data class Lanternfish(var days: Int)
